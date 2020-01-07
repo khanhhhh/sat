@@ -49,7 +49,8 @@ func Abs(ratIn Message) (ratOut Message) {
 	if Sign(1-ratIn) == 1 {
 		ratOut = +ratIn
 	} else {
-		ratOut = 1 - (-(1 - ratIn))
+		//ratOut = 1 - (-(1 - ratIn))
+		ratOut = 2 - ratIn
 	}
 	return ratOut
 }
@@ -70,24 +71,28 @@ func Cmp(ratIn1 Message, ratIn2 Message) (signOut int) {
 
 // Add :
 func Add(ratIn1 Message, ratIn2 Message) (ratOut Message) {
-	ratOut = 1 - ((1 - ratIn1) + (1 - ratIn2))
+	//ratOut = 1 - ((1 - ratIn1) + (1 - ratIn2))
+	ratOut = -1 + ratIn1 + ratIn2
 	return ratOut
 }
 
 // Sub :
 func Sub(ratIn1 Message, ratIn2 Message) (ratOut Message) {
-	ratOut = 1 - ((1 - ratIn1) - (1 - ratIn2))
+	//ratOut = 1 - ((1 - ratIn1) - (1 - ratIn2))
+	ratOut = 1 + ratIn1 - ratIn2
 	return ratOut
 }
 
 // Mul :
 func Mul(ratIn1 Message, ratIn2 Message) (ratOut Message) {
-	ratOut = 1 - ((1 - ratIn1) * (1 - ratIn2))
+	//ratOut = 1 - ((1 - ratIn1) * (1 - ratIn2))
+	ratOut = ratIn1 + ratIn2 - ratIn1*ratIn2
 	return ratOut
 }
 
 // Div :
 func Div(ratIn1 Message, ratIn2 Message) (ratOut Message) {
-	ratOut = 1 - ((1 - ratIn1) / (1 - ratIn2))
+	//ratOut = 1 - ((1 - ratIn1) / (1 - ratIn2))
+	ratOut = (ratIn1 - ratIn2) / (1 - ratIn2)
 	return ratOut
 }

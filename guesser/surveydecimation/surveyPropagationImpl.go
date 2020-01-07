@@ -77,6 +77,10 @@ func iterateSurveyPropagationGraph(ins instance.Instance, graphIn *surveyPropaga
 					message.Sub(message.FromInt(1, 1), graphIn.etaMap[newEdge(variableI, clauseB)]),
 				)
 			}
+			// detect zero
+			if message.Sign(productAgree) == 0 && message.Sign(productDisagree) == 0 {
+				panic("triplet: Zero")
+			}
 			var triplet [3]message.Message
 			smoothConst := message.FromFloat(smooth)
 			triplet[0] = message.Mul(
@@ -94,11 +98,6 @@ func iterateSurveyPropagationGraph(ins instance.Instance, graphIn *surveyPropaga
 			// detect nan
 			if message.IsNaN(triplet[0]) || message.IsNaN(triplet[1]) || message.IsNaN(triplet[2]) {
 				panic("triplet: NaN")
-			}
-			// detect zero
-			sum := message.Add(message.Add(triplet[0], triplet[1]), triplet[2])
-			if message.Sign(sum) == 0 {
-				panic("triplet: Zero")
 			}
 			graphOut.piMap[edge] = triplet
 		}

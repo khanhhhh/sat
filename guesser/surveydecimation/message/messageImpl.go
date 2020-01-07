@@ -1,5 +1,6 @@
 package message
 
+// Message :
 type Message float64
 
 // FromInt :
@@ -15,11 +16,11 @@ func FromFloat(floatIn float64) (ratOut Message) {
 }
 
 // ToFloat :
-func (ratIn Message) ToFloat() (floatOut float64) {
+func ToFloat(ratIn Message) (floatOut float64) {
 	return float64(ratIn)
 }
 
-// Abs
+// Abs :
 func Abs(ratIn Message) (ratOut Message) {
 	if ratIn >= 0 {
 		ratOut = +ratIn
@@ -29,7 +30,8 @@ func Abs(ratIn Message) (ratOut Message) {
 	return ratOut
 }
 
-func (rat Message) Sign() (signOut int) {
+// Sign :
+func Sign(rat Message) (signOut int) {
 	if rat > 0 {
 		signOut = +1
 	}
@@ -42,25 +44,25 @@ func (rat Message) Sign() (signOut int) {
 	return signOut
 }
 
-// Add
+// Add :
 func Add(ratIn1 Message, ratIn2 Message) (ratOut Message) {
 	ratOut = ratIn1 + ratIn2
 	return ratOut
 }
 
-// Sub
+// Sub :
 func Sub(ratIn1 Message, ratIn2 Message) (ratOut Message) {
 	ratOut = ratIn1 - ratIn2
 	return ratOut
 }
 
-// Mul
+// Mul :
 func Mul(ratIn1 Message, ratIn2 Message) (ratOut Message) {
 	ratOut = ratIn1 * ratIn2
 	return ratOut
 }
 
-// Div
+// Div :
 func Div(ratIn1 Message, ratIn2 Message) (ratOut Message) {
 	ratOut = ratIn1 / ratIn2
 	return ratOut

@@ -59,7 +59,7 @@ func surveyDecimation(ins instance.Instance, graphIn *surveyPropagationGraph, sm
 			if bias > maxBias {
 				maxBias = bias
 				maxBiasVariable = variable
-				maxBiasValue = (message.Sub(mu[1], mu[0]).Sign() == 1)
+				maxBiasValue = message.Sign(message.Sub(mu[1], mu[0])) == 1
 			}
 		}
 	}

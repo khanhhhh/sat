@@ -56,8 +56,8 @@ func iterateSurveyPropagationGraph(ins instance.Instance, graphIn *surveyPropaga
 			//if math.IsNaN(eta) {
 			//	panic("eta: NaN")
 			//}
-			if message.Abs(message.Sub(eta, graphIn.etaMap[edge])).ToFloat() > absoluteEtaChange {
-				absoluteEtaChange = message.Abs(message.Sub(eta, graphIn.etaMap[edge])).ToFloat()
+			if message.ToFloat(message.Abs(message.Sub(eta, graphIn.etaMap[edge]))) > absoluteEtaChange {
+				absoluteEtaChange = message.ToFloat(message.Abs(message.Sub(eta, graphIn.etaMap[edge])))
 			}
 			graphOut.etaMap[edge] = eta
 		}

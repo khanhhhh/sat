@@ -78,8 +78,8 @@ func iterateSurveyPropagationGraph(ins instance.Instance, graphIn *surveyPropaga
 			if productAgree.Sign() == 0 && productDisagree.Sign() == 0 {
 				panic("triplet: Zero")
 			} else {
-				triplet[0] = productAgree.Mul(oneMessage.Sub(smoothConst.Mul(productDisagree)))
-				triplet[0] = productDisagree.Mul(oneMessage.Sub(smoothConst.Mul(productAgree)))
+				triplet[0] = oneMessage.Sub(smoothConst.Mul(productDisagree)).Mul(productAgree)
+				triplet[0] = oneMessage.Sub(smoothConst.Mul(productAgree)).Mul(productDisagree)
 				triplet[2] = smoothConst.Mul(productAgree).Mul(productDisagree)
 			}
 			// detect nan

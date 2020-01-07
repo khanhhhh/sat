@@ -24,8 +24,8 @@ func surveyDecimation(ins instance.Instance, graphIn *surveyPropagationGraph, sm
 				productNegative = productNegative.Mul(oneMessage.Sub(graphIn.etaMap[newEdge(variable, clause)]))
 			}
 			smoothConst := message.FromFloat(smooth)
-			mu[0] = productPositive.Mul(oneMessage.Sub(smoothConst.Mul(productNegative)))
-			mu[1] = productNegative.Mul(oneMessage.Sub(smoothConst.Mul(productPositive)))
+			mu[0] = oneMessage.Sub(smoothConst.Mul(productNegative)).Mul(productPositive)
+			mu[1] = oneMessage.Sub(smoothConst.Mul(productPositive)).Mul(productNegative)
 			mu[2] = smoothConst.Mul(productPositive).Mul(productNegative)
 		}
 		// normalize

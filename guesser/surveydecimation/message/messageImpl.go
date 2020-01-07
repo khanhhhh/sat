@@ -19,80 +19,80 @@ func FromFloat(floatIn float64) (ratOut Message) {
 }
 
 // ToFloat :
-func ToFloat(ratIn Message) (floatOut float64) {
-	floatOut = float64(1 - ratIn)
+func (rat Message) ToFloat() (floatOut float64) {
+	floatOut = float64(1 - rat)
 	return floatOut
 }
 
 // IsNaN :
-func IsNaN(ratIn Message) (IsNaN bool) {
-	IsNaN = math.IsNaN(float64(1 - ratIn))
+func (rat Message) IsNaN() (IsNaN bool) {
+	IsNaN = math.IsNaN(float64(1 - rat))
 	return IsNaN
 }
 
 // Sign :
-func Sign(ratIn Message) (signOut int) {
-	if 1-ratIn > 0 {
+func (rat Message) Sign() (signOut int) {
+	if 1-rat > 0 {
 		signOut = +1
 	}
-	if 1-ratIn < 0 {
+	if 1-rat < 0 {
 		signOut = -1
 	}
-	if 1-ratIn == 0 {
+	if 1-rat == 0 {
 		signOut = 0
 	}
 	return signOut
 }
 
 // Abs :
-func Abs(ratIn Message) (ratOut Message) {
-	if Sign(1-ratIn) == 1 {
-		ratOut = +ratIn
+func (rat Message) Abs() (ratOut Message) {
+	if (1 - rat).Sign() == 1 {
+		ratOut = +rat
 	} else {
 		//ratOut = 1 - (-(1 - ratIn))
-		ratOut = 2 - ratIn
+		ratOut = 2 - rat
 	}
 	return ratOut
 }
 
 // Cmp :
-func Cmp(ratIn1 Message, ratIn2 Message) (signOut int) {
-	if 1-ratIn1 > 1-ratIn2 {
+func (rat Message) Cmp(ratIn Message) (signOut int) {
+	if 1-rat > 1-ratIn {
 		signOut = +1
 	}
-	if 1-ratIn1 < 1-ratIn2 {
+	if 1-rat < 1-ratIn {
 		signOut = -1
 	}
-	if 1-ratIn1 == 1-ratIn2 {
+	if 1-rat == 1-ratIn {
 		signOut = 0
 	}
 	return signOut
 }
 
 // Add :
-func Add(ratIn1 Message, ratIn2 Message) (ratOut Message) {
-	//ratOut = 1 - ((1 - ratIn1) + (1 - ratIn2))
-	ratOut = -1 + ratIn1 + ratIn2
+func (rat Message) Add(ratIn Message) (ratOut Message) {
+	//ratOut = 1 - ((1 - rat) + (1 - ratIn))
+	ratOut = -1 + rat + ratIn
 	return ratOut
 }
 
 // Sub :
-func Sub(ratIn1 Message, ratIn2 Message) (ratOut Message) {
-	//ratOut = 1 - ((1 - ratIn1) - (1 - ratIn2))
-	ratOut = 1 + ratIn1 - ratIn2
+func (rat Message) Sub(ratIn Message) (ratOut Message) {
+	//ratOut = 1 - ((1 - rat) - (1 - ratIn))
+	ratOut = 1 + rat - ratIn
 	return ratOut
 }
 
 // Mul :
-func Mul(ratIn1 Message, ratIn2 Message) (ratOut Message) {
-	//ratOut = 1 - ((1 - ratIn1) * (1 - ratIn2))
-	ratOut = ratIn1 + ratIn2 - ratIn1*ratIn2
+func (rat Message) Mul(ratIn Message) (ratOut Message) {
+	//ratOut = 1 - ((1 - rat) * (1 - ratIn))
+	ratOut = rat + ratIn - rat*ratIn
 	return ratOut
 }
 
 // Div :
-func Div(ratIn1 Message, ratIn2 Message) (ratOut Message) {
-	//ratOut = 1 - ((1 - ratIn1) / (1 - ratIn2))
-	ratOut = (ratIn1 - ratIn2) / (1 - ratIn2)
+func (rat Message) Div(ratIn Message) (ratOut Message) {
+	//ratOut = 1 - ((1 - rat) / (1 - ratIn))
+	ratOut = (rat - ratIn) / (1 - ratIn)
 	return ratOut
 }

@@ -14,57 +14,41 @@ func surveyDecimation(ins instance.Instance, graphIn *surveyPropagationGraph, sm
 		// calculate mu
 		var mu [3]message.Message
 		{
+			var oneMessage = message.FromInt(1, 1)
 			var productPositive = message.FromInt(1, 1)
 			var productNegative = message.FromInt(1, 1)
 			for _, clause := range clausePositive(ins, variable) {
-				productPositive = message.Mul(
-					productPositive,
-					message.Sub(message.FromInt(1, 1), graphIn.etaMap[newEdge(variable, clause)]),
-				)
+				productPositive = productPositive.Mul(oneMessage.Sub(graphIn.etaMap[newEdge(variable, clause)]))
 			}
 			for _, clause := range clauseNegative(ins, variable) {
-				productNegative = message.Mul(
-					productNegative,
-					message.Sub(message.FromInt(1, 1), graphIn.etaMap[newEdge(variable, clause)]),
-				)
+				productNegative = productNegative.Mul(oneMessage.Sub(graphIn.etaMap[newEdge(variable, clause)]))
 			}
 			smoothConst := message.FromFloat(smooth)
-			mu[0] = message.Mul(
-				productPositive,
-				message.Sub(message.FromInt(1, 1), message.Mul(smoothConst, productNegative)),
-			)
-
-			mu[1] = message.Mul(
-				productNegative,
-				message.Sub(message.FromInt(1, 1), message.Mul(smoothConst, productPositive)),
-			)
-
-			mu[2] = message.Mul(
-				smoothConst,
-				message.Mul(productPositive, productNegative),
-			)
+			mu[0] = productPositive.Mul(oneMessage.Sub(smoothConst.Mul(productNegative)))
+			mu[1] = productNegative.Mul(oneMessage.Sub(smoothConst.Mul(productPositive)))
+			mu[2] = smoothConst.Mul(productPositive).Mul(productNegative)
 		}
 		// normalize
 		{
-			sum := message.Add(message.Add(mu[0], mu[1]), mu[2])
-			if message.Sign(sum) == 1 {
-				mu[0] = message.Div(mu[0], sum)
-				mu[1] = message.Div(mu[1], sum)
-				mu[2] = message.Div(mu[2], sum)
+			sum := mu[0].Add(mu[1]).Add(mu[2])
+			if sum.Sign() == 1 {
+				mu[0] = mu[0].Div(sum)
+				mu[1] = mu[1].Div(sum)
+				mu[2] = mu[2].Div(sum)
 			}
 		}
 		// select maxBias
 		{
-			bias := message.Abs(message.Sub(mu[1], mu[0]))
-			if message.Cmp(bias, maxBias) == 1 {
+			bias := mu[1].Sub(mu[0]).Abs()
+			if bias.Cmp(maxBias) == 1 {
 				maxBias = bias
 				maxBiasVariable = variable
-				maxBiasValue = message.Cmp(mu[1], mu[0]) == 1
+				maxBiasValue = mu[1].Cmp(mu[0]) == 1
 			}
 		}
 	}
 	// detect trivial cover
-	if message.Sign(maxBias) == 0 {
+	if maxBias.Sign() == 0 {
 		nonTrivialCover = false
 	} else {
 		nonTrivialCover = true

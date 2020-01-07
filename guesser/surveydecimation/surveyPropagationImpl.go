@@ -48,56 +48,42 @@ func iterateSurveyPropagationGraph(ins instance.Instance, graphIn *surveyPropaga
 			for variableJ := range ins.ClauseMap()[clauseA] {
 				if variableJ != variableI {
 					triplet := graphIn.piMap[newEdge(variableJ, clauseA)]
-					sum := message.Add(message.Add(triplet[0], triplet[1]), triplet[2])
-					eta = message.Mul(eta, message.Div(triplet[0], sum))
+					sum := triplet[0].Add(triplet[1]).Add(triplet[2])
+					eta = eta.Mul(triplet[0].Div(sum))
 				}
 			}
 			// detect nan : if sum triplet == 0 => eta = NaN
-			if message.IsNaN(eta) {
+			if eta.IsNaN() {
 				panic("eta: NaN")
 			}
-			if message.ToFloat(message.Abs(message.Sub(eta, graphIn.etaMap[edge]))) > absoluteEtaChange {
-				absoluteEtaChange = message.ToFloat(message.Abs(message.Sub(eta, graphIn.etaMap[edge])))
+			if eta.Sub(graphIn.etaMap[edge]).Abs().ToFloat() > absoluteEtaChange {
+				absoluteEtaChange = eta.Sub(graphIn.etaMap[edge]).Abs().ToFloat()
 			}
 			graphOut.etaMap[edge] = eta
 		}
 		// pi
 		{
+			var oneMessage = message.FromInt(1, 1)
 			var productAgree = message.FromInt(1, 1)
 			var productDisagree = message.FromInt(1, 1)
 			for _, clauseB := range clauseAgree(ins, edge) {
-				productAgree = message.Mul(
-					productAgree,
-					message.Sub(message.FromInt(1, 1), graphIn.etaMap[newEdge(variableI, clauseB)]),
-				)
+				productAgree = productAgree.Mul(oneMessage.Sub(graphIn.etaMap[newEdge(variableI, clauseB)]))
 			}
 			for _, clauseB := range clauseDisagree(ins, edge) {
-				productDisagree = message.Mul(
-					productDisagree,
-					message.Sub(message.FromInt(1, 1), graphIn.etaMap[newEdge(variableI, clauseB)]),
-				)
+				productDisagree = productDisagree.Mul(oneMessage.Sub(graphIn.etaMap[newEdge(variableI, clauseB)]))
 			}
 			var triplet [3]message.Message
 			smoothConst := message.FromFloat(smooth)
 			// detect zero
-			if message.Sign(productAgree) == 0 && message.Sign(productDisagree) == 0 {
+			if productAgree.Sign() == 0 && productDisagree.Sign() == 0 {
 				panic("triplet: Zero")
 			} else {
-				triplet[0] = message.Mul(
-					productAgree,
-					message.Sub(message.FromInt(1, 1), message.Mul(smoothConst, productDisagree)),
-				)
-				triplet[1] = message.Mul(
-					productDisagree,
-					message.Sub(message.FromInt(1, 1), message.Mul(smoothConst, productAgree)),
-				)
-				triplet[2] = message.Mul(
-					message.FromFloat(smooth),
-					message.Mul(productAgree, productDisagree),
-				)
+				triplet[0] = productAgree.Mul(oneMessage.Sub(smoothConst.Mul(productDisagree)))
+				triplet[0] = productDisagree.Mul(oneMessage.Sub(smoothConst.Mul(productAgree)))
+				triplet[2] = smoothConst.Mul(productAgree).Mul(productDisagree)
 			}
 			// detect nan
-			if message.IsNaN(triplet[0]) || message.IsNaN(triplet[1]) || message.IsNaN(triplet[2]) {
+			if triplet[0].IsNaN() || triplet[1].IsNaN() || triplet[2].IsNaN() {
 				panic("triplet: NaN")
 			}
 			graphOut.piMap[edge] = triplet

@@ -8,8 +8,12 @@
 
 - walk : WalkSAT solver
 
+- search : exhastive search with guesser
+
 # guesser
 
 - maxmin : choose variable with maximum (positive clauses - smooth * negative clauses)
 
 - surveydecimation: Survey Inspired Decimation (smooth)
+
+- unitpropagation : unit propagation

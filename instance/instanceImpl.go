@@ -59,32 +59,35 @@ func (ins *instance) ClauseMap() (mapOut map[Clause]map[Variable]bool) {
 	return mapOut
 }
 
+func (ins *instance) Reduce(variableIn Variable, valueIn bool) {
+	// variableMap
+	delete(ins.variableMap, variableIn) // remove variables
+	// clauseMap
+	for clause := range ins.clauseMap {
+		sign, exist := ins.clauseMap[clause][variableIn]
+		if exist {
+			if sign == valueIn { // remove the Clause
+				delete(ins.clauseMap, clause)
+				for variable := range ins.variableMap { // remove all associated variables
+					delete(ins.variableMap[variable], clause)
+				}
+			} else { // reduce the Clause
+				delete(ins.clauseMap[clause], variableIn)
+			}
+		}
+	}
+
+}
+
 /*
 // hasEmptyClause :
 // return true if there are some empty Clause
 func (ins *instance) hasEmptyClause() bool {
-	for c := range ins.clauseMap {
-		if len(ins.clauseMap[c]) == 0 {
+	for clause := range ins.clauseMap {
+		if len(ins.clauseMap[clause]) == 0 {
 			return true
 		}
 	}
 	return false
-}
-// reduce :
-// reduce the assignment by setting value to a Variable
-func (ins *instance) reduce(i Variable, value bool) {
-	// variableMap
-	delete(ins.variableMap, i)
-	// clauseMap
-	for c := range ins.clauseMap {
-		sign, exist := ins.clauseMap[c][i]
-		if exist {
-			if sign == value { // remove the Clause
-				delete(ins.clauseMap, c)
-			} else { // reduce the Clause
-				delete(ins.clauseMap[c], i)
-			}
-		}
-	}
 }
 */

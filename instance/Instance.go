@@ -2,7 +2,10 @@ package instance
 
 import "math/rand"
 
+// Variable :
 type Variable = int
+
+// Clause :
 type Clause = int
 
 // Instance :
@@ -11,6 +14,7 @@ type Instance interface {
 	// basic
 	Clone() (InstanceOut Instance)
 	PushClause(variableMap map[Variable]bool)
+	Reduce(variableIn Variable, valueIn bool)
 	Evaluate(assignment map[Variable]bool) (sat bool, conflict Clause)
 	// raw data
 	VariableMap() (mapOut map[Variable]map[Clause]bool)

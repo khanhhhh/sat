@@ -49,13 +49,13 @@ func iterateSurveyPropagationGraph(ins instance.Instance, graphIn *surveyPropaga
 				if variableJ != variableI {
 					triplet := graphIn.piMap[newEdge(variableJ, clauseA)]
 					sum := message.Add(message.Add(triplet[0], triplet[1]), triplet[2])
-					eta *= message.Div(triplet[0], sum)
+					eta = message.Mul(eta, message.Div(triplet[0], sum))
 				}
 			}
 			// detect nan : if sum triplet == 0 => eta = NaN
-			//if math.IsNaN(eta) {
-			//	panic("eta: NaN")
-			//}
+			if message.IsNaN(eta) {
+				panic("eta: NaN")
+			}
 			if message.ToFloat(message.Abs(message.Sub(eta, graphIn.etaMap[edge]))) > absoluteEtaChange {
 				absoluteEtaChange = message.ToFloat(message.Abs(message.Sub(eta, graphIn.etaMap[edge])))
 			}
@@ -92,11 +92,12 @@ func iterateSurveyPropagationGraph(ins instance.Instance, graphIn *surveyPropaga
 				message.Mul(productAgree, productDisagree),
 			)
 			// detect nan
-			//if math.IsNaN(triplet[0]) || math.IsNaN(triplet[1]) || math.IsNaN(triplet[2]) {
-			//	panic("triplet: NaN")
-			//}
+			if message.IsNaN(triplet[0]) || message.IsNaN(triplet[1]) || message.IsNaN(triplet[2]) {
+				panic("triplet: NaN")
+			}
 			// detect zero
-			if triplet[0]+triplet[1]+triplet[2] == 0 {
+			sum := message.Add(message.Add(triplet[0], triplet[1]), triplet[2])
+			if message.Sign(sum) == 0 {
 				panic("triplet: Zero")
 			}
 			graphOut.piMap[edge] = triplet

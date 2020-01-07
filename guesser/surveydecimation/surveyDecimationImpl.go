@@ -47,7 +47,7 @@ func surveyDecimation(ins instance.Instance, graphIn *surveyPropagationGraph, sm
 		// normalize
 		{
 			sum := message.Add(message.Add(mu[0], mu[1]), mu[2])
-			if sum > 0 {
+			if message.Sign(sum) == 1 {
 				mu[0] = message.Div(mu[0], sum)
 				mu[1] = message.Div(mu[1], sum)
 				mu[2] = message.Div(mu[2], sum)
@@ -56,15 +56,15 @@ func surveyDecimation(ins instance.Instance, graphIn *surveyPropagationGraph, sm
 		// select maxBias
 		{
 			bias := message.Abs(message.Sub(mu[1], mu[0]))
-			if bias > maxBias {
+			if message.Cmp(bias, maxBias) == 1 {
 				maxBias = bias
 				maxBiasVariable = variable
-				maxBiasValue = message.Sign(message.Sub(mu[1], mu[0])) == 1
+				maxBiasValue = message.Cmp(mu[1], mu[0]) == 1
 			}
 		}
 	}
 	// detect trivial cover
-	if maxBias == 0 {
+	if message.Sign(maxBias) == 0 {
 		nonTrivialCover = false
 	} else {
 		nonTrivialCover = true

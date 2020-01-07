@@ -1,5 +1,7 @@
 package message
 
+import "math"
+
 // Message :
 type Message float64
 
@@ -17,12 +19,33 @@ func FromFloat(floatIn float64) (ratOut Message) {
 
 // ToFloat :
 func ToFloat(ratIn Message) (floatOut float64) {
-	return float64(ratIn)
+	floatOut = float64(ratIn)
+	return floatOut
+}
+
+// IsNaN :
+func IsNaN(ratIn Message) (IsNaN bool) {
+	IsNaN = math.IsNaN(float64(ratIn))
+	return IsNaN
+}
+
+// Sign :
+func Sign(ratIn Message) (signOut int) {
+	if ratIn > 0 {
+		signOut = +1
+	}
+	if ratIn < 0 {
+		signOut = -1
+	}
+	if ratIn == 0 {
+		signOut = 0
+	}
+	return signOut
 }
 
 // Abs :
 func Abs(ratIn Message) (ratOut Message) {
-	if ratIn >= 0 {
+	if Sign(ratIn) == 1 {
 		ratOut = +ratIn
 	} else {
 		ratOut = -ratIn
@@ -30,16 +53,16 @@ func Abs(ratIn Message) (ratOut Message) {
 	return ratOut
 }
 
-// Sign :
-func Sign(rat Message) (signOut int) {
-	if rat > 0 {
+// Cmp :
+func Cmp(ratIn1 Message, ratIn2 Message) (signOut int) {
+	if ratIn1 > ratIn2 {
 		signOut = +1
 	}
-	if rat == 0 {
-		signOut = 0
-	}
-	if rat < 0 {
+	if ratIn1 < ratIn2 {
 		signOut = -1
+	}
+	if ratIn1 == ratIn2 {
+		signOut = 0
 	}
 	return signOut
 }

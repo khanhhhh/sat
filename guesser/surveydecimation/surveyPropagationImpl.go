@@ -6,8 +6,8 @@ import (
 )
 
 type surveyPropagationGraph struct {
-	piMap  map[edge][3]message.Message // variable -> clause
-	etaMap map[edge]message.Message    // clause -> variable
+	piMap  map[edge][3]message.Message // variable -> clause [converge to 1]
+	etaMap map[edge]message.Message    // clause -> variable [converge to 1]
 }
 
 // makeSurveyPropagationGraph :

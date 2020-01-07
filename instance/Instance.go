@@ -36,16 +36,12 @@ func Random3SAT(numVariables int, density float64) (InstanceOut Instance) {
 	numClauses := int(density * float64(numVariables))
 	InstanceOut = NewInstance()
 	for c := 0; c < numClauses; c++ {
-		v1 := rand.Intn(numVariables)
-		s1 := (rand.Intn(2) == 1)
-		v2 := rand.Intn(numVariables)
-		s2 := (rand.Intn(2) == 1)
-		v3 := rand.Intn(numVariables)
-		s3 := (rand.Intn(2) == 1)
 		variableMap := make(map[Variable]bool)
-		variableMap[v1] = s1
-		variableMap[v2] = s2
-		variableMap[v3] = s3
+		for i := 0; i < 3; i++ {
+			v := rand.Intn(numVariables)
+			s := (rand.Intn(2) == 1)
+			variableMap[v] = s
+		}
 		InstanceOut.PushClause(variableMap)
 	}
 	return InstanceOut

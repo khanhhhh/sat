@@ -1,5 +1,7 @@
 # sat
 
+[![GoDoc](https://godoc.org/github.com/khanhhhh/sat?status.svg)](https://godoc.org/github.com/khanhhhh/sat)
+
 # solver
 
 - gini : CDCL solver

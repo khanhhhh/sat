@@ -4,11 +4,13 @@
 
 # solver
 
-- gini : CDCL solver
+- cdcl : gini CDCL solver
 
 - walk : WalkSAT solver
 
-- search : exhastive search with guesser
+- search : search with guesser
+
+- surveysearch : complete search with survey decimation and cdcl
 
 # guesser
 

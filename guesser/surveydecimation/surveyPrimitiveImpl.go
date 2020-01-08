@@ -15,7 +15,7 @@ func newEdge(variableIn instance.Variable, clauseIn instance.Clause) (edgeOut ed
 // C+(i) :
 // set of clauses contain i as a positive literal
 func clausePositive(ins instance.Instance, variable instance.Variable) (setOut []instance.Clause) {
-	setOut = make([]instance.Clause, 0)
+	setOut = make([]instance.Clause, 0, len(ins.VariableMap()[variable]))
 	for clause, sign := range ins.VariableMap()[variable] {
 		if sign == true {
 			setOut = append(setOut, clause)
@@ -27,7 +27,7 @@ func clausePositive(ins instance.Instance, variable instance.Variable) (setOut [
 // C-(i) :
 // set of clauses contain i as a negative literal
 func clauseNegative(ins instance.Instance, variable instance.Variable) (setOut []instance.Clause) {
-	setOut = make([]instance.Clause, 0)
+	setOut = make([]instance.Clause, 0, len(ins.VariableMap()[variable]))
 	for clause, sign := range ins.VariableMap()[variable] {
 		if sign == false {
 			setOut = append(setOut, clause)
@@ -39,9 +39,9 @@ func clauseNegative(ins instance.Instance, variable instance.Variable) (setOut [
 // Cs(a, i) :
 // set of clauses contain the same sign literal
 func clauseAgree(ins instance.Instance, edgeIn edge) (setOut []instance.Clause) {
-	setOut = make([]instance.Clause, 0)
 	edgeClause := edgeIn.clause
 	edgeVariable := edgeIn.variable
+	setOut = make([]instance.Clause, 0, len(ins.VariableMap()[edgeVariable]))
 	edgeSign := ins.VariableMap()[edgeVariable][edgeClause]
 	for clause, sign := range ins.VariableMap()[edgeVariable] {
 		if clause != edgeClause && sign == edgeSign {
@@ -54,10 +54,10 @@ func clauseAgree(ins instance.Instance, edgeIn edge) (setOut []instance.Clause) 
 // Cu(a, i) :
 // set of clauses contain the different sign literal
 func clauseDisagree(ins instance.Instance, edgeIn edge) (setOut []instance.Clause) {
-	setOut = make([]instance.Clause, 0)
 	edgeClause := edgeIn.clause
 	edgeVariable := edgeIn.variable
 	edgeSign := ins.VariableMap()[edgeVariable][edgeClause]
+	setOut = make([]instance.Clause, 0, len(ins.VariableMap()[edgeVariable]))
 	for clause, sign := range ins.VariableMap()[edgeVariable] {
 		if clause != edgeClause && sign != edgeSign {
 			setOut = append(setOut, clause)

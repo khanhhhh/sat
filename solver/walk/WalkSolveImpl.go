@@ -14,13 +14,13 @@ var base float64 = 1.4
 // Solve SAT Instance stochastically
 func Solve(ins instance.Instance) (sat bool, assignment map[instance.Variable]bool) {
 	assignment = make(map[instance.Variable]bool)
-	var variableList = make([]instance.Variable, 0)
+	var variableList = make([]instance.Variable, 0, len(ins.VariableMap()))
 	for variable := range ins.VariableMap() {
 		variableList = append(variableList, variable)
 	}
 	var clauseMap = make(map[instance.Clause][]instance.Variable)
 	for clause := range ins.ClauseMap() {
-		variableSubList := make([]instance.Variable, 0)
+		variableSubList := make([]instance.Variable, 0, len(ins.ClauseMap()[clause]))
 		for variable := range ins.ClauseMap()[clause] {
 			variableSubList = append(variableSubList, variable)
 		}

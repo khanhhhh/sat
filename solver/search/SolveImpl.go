@@ -48,6 +48,7 @@ func Solve(ins instance.Instance, guesserIn Guesser, completeSearch bool, comple
 	{
 		ins := ins.Clone()
 		ins.Reduce(variable, value)
+		fmt.Println("trying accept path:", len(ins.VariableMap()))
 		sat, assignment = Solve(ins, guesserIn, completeSearch, completeSearcher)
 		if sat {
 			assignment[variable] = value

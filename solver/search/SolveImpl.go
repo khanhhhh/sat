@@ -2,6 +2,8 @@ package search
 
 import "github.com/khanhhhh/sat/instance"
 
+import "fmt"
+
 // Guesser :
 type Guesser func(ins instance.Instance) (converged bool, variableOut instance.Variable, vaueOut bool)
 
@@ -38,6 +40,7 @@ func Solve(ins instance.Instance, guesserIn Guesser, completeSearch bool, comple
 	}
 	// reject path
 	if completeSearch {
+		fmt.Println("trying reject path:", len(ins.VariableMap()))
 		ins := ins.Clone()
 		ins.Reduce(variable, value)
 		sat, assignment = Solve(ins, guesserIn, completeSearch, completeSearcher)

@@ -20,7 +20,12 @@ func Guess(ins instance.Instance, smooth float64) (converged bool, nonTrivialCov
 	{
 		numIterations := 1 + int(iterMul*math.Log2(float64(len(ins.VariableMap()))))
 		for iteration := 0; iteration < numIterations; iteration++ {
-			absoluteEtaChange, graph = iterateSurveyPropagationGraph(ins, graph, smooth)
+			var err error
+			absoluteEtaChange, graph, err = iterateSurveyPropagationGraph(ins, graph, smooth)
+			if err != nil {
+				absoluteEtaChange = 1
+				break
+			}
 			if absoluteEtaChange < tolerance {
 				break
 			}

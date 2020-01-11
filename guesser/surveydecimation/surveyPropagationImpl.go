@@ -1,6 +1,8 @@
 package surveydecimation
 
 import (
+	"errors"
+
 	"github.com/khanhhhh/sat/guesser/surveydecimation/message"
 	"github.com/khanhhhh/sat/instance"
 )
@@ -28,9 +30,11 @@ func makeSurveyPropagationGraph(ins instance.Instance) (graph *surveyPropagation
 	return graph
 }
 
+var iter = true
+
 // iterateSurveyPropagationGraph :
 // Iterate clauseA Survey Propagation Graph
-func iterateSurveyPropagationGraph(ins instance.Instance, graphIn *surveyPropagationGraph, smooth float64) (absoluteEtaChange float64, graphOut *surveyPropagationGraph) {
+func iterateSurveyPropagationGraph(ins instance.Instance, graphIn *surveyPropagationGraph, smooth float64) (absoluteEtaChange float64, graphOut *surveyPropagationGraph, err error) {
 	// initialize etaChange to 0
 	absoluteEtaChange = 0
 	// make empty graphOut
@@ -51,10 +55,10 @@ func iterateSurveyPropagationGraph(ins instance.Instance, graphIn *surveyPropaga
 					sum := triplet[0].Add(triplet[1]).Add(triplet[2])
 					eta = eta.Mul(triplet[0].Div(sum))
 				}
-			}
-			// detect nan : if sum triplet == 0 => eta = NaN
-			if eta.IsNaN() {
-				panic("eta: NaN")
+				// detect nan : if sum triplet == 0 => eta = NaN
+				if eta.IsNaN() {
+					return 0, graphIn, errors.New("eta: NaN")
+				}
 			}
 			if eta.Sub(graphIn.etaMap[edge]).Abs().ToFloat() > absoluteEtaChange {
 				absoluteEtaChange = eta.Sub(graphIn.etaMap[edge]).Abs().ToFloat()
@@ -74,20 +78,19 @@ func iterateSurveyPropagationGraph(ins instance.Instance, graphIn *surveyPropaga
 			}
 			var triplet [3]message.Message
 			smoothConst := message.FromFloat(smooth)
-			// detect zero
-			if productAgree.Sign() == 0 && productDisagree.Sign() == 0 {
-				panic("triplet: Zero")
-			} else {
-				triplet[0] = oneMessage.Sub(smoothConst.Mul(productDisagree)).Mul(productAgree)
-				triplet[0] = oneMessage.Sub(smoothConst.Mul(productAgree)).Mul(productDisagree)
-				triplet[2] = smoothConst.Mul(productAgree).Mul(productDisagree)
+			// detect zero, negative
+			if productAgree.Sign() != 1 && productDisagree.Sign() != 1 {
+				return 0, graphIn, errors.New("triplet: non-positive")
 			}
+			triplet[0] = oneMessage.Sub(smoothConst.Mul(productDisagree)).Mul(productAgree)
+			triplet[1] = oneMessage.Sub(smoothConst.Mul(productAgree)).Mul(productDisagree)
+			triplet[2] = smoothConst.Mul(productAgree).Mul(productDisagree)
 			// detect nan
 			if triplet[0].IsNaN() || triplet[1].IsNaN() || triplet[2].IsNaN() {
-				panic("triplet: NaN")
+				return 0, graphIn, errors.New("triplet: NaN")
 			}
 			graphOut.piMap[edge] = triplet
 		}
 	}
-	return absoluteEtaChange, graphOut
+	return absoluteEtaChange, graphOut, nil
 }

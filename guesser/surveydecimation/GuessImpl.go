@@ -4,6 +4,7 @@ package surveydecimation
 
 import (
 	"math"
+	"time"
 
 	"github.com/khanhhhh/sat/instance"
 )
@@ -14,6 +15,7 @@ var iterMul float64 = 100
 // Guess :
 // Survey Inspired Decimation: Predict the value of a variable
 func Guess(ins instance.Instance, smooth float64) (converged bool, nonTrivialCover bool, variableOut instance.Variable, valueOut bool) {
+	t := time.Now()
 	// survey propagation
 	var absoluteEtaChange float64 = 1
 	graph := makeSurveyPropagationGraph(ins)
@@ -40,5 +42,6 @@ func Guess(ins instance.Instance, smooth float64) (converged bool, nonTrivialCov
 			nonTrivialCover, variableOut, valueOut = surveyDecimation(ins, graph, smooth)
 		}
 	}
+	fmt.Println("Guess time:", time.Since(t))
 	return converged, nonTrivialCover, variableOut, valueOut
 }

@@ -1,6 +1,9 @@
 package surveysearch
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/khanhhhh/sat/guesser/surveydecimation"
 	"github.com/khanhhhh/sat/guesser/unitpropagation"
 	"github.com/khanhhhh/sat/instance"
@@ -16,7 +19,9 @@ var guesser = func(ins instance.Instance) (converged bool, variableOut instance.
 		return converged, variableOut, valueOut
 	}
 	// surveydecimation
+	t := time.Now()
 	converged, nonTrivial, variableOut, valueOut = surveydecimation.Guess(ins, 1.0)
+	fmt.Println("\tGuess time:", time.Since(t))
 	if converged && nonTrivial {
 		return converged, variableOut, valueOut
 	}

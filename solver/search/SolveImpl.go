@@ -1,8 +1,10 @@
 package search
 
-import "github.com/khanhhhh/sat/instance"
+import (
+	"fmt"
 
-import "fmt"
+	"github.com/khanhhhh/sat/instance"
+)
 
 // Guesser :
 type Guesser func(ins instance.Instance) (converged bool, variableOut instance.Variable, vaueOut bool)
@@ -10,21 +12,35 @@ type Guesser func(ins instance.Instance) (converged bool, variableOut instance.V
 // Searcher :
 type Searcher func(ins instance.Instance) (sat bool, assignment map[instance.Variable]bool)
 
+// IsTrivialUnsat :
+func isTrivialUnsat(ins instance.Instance) (Unsat bool) {
+	for _, clause := range ins.ClauseMap() {
+		if len(clause) == 0 {
+			return true
+		}
+	}
+	return false
+}
+
+// IsTrivialSat :
+func isTrivialSat(ins instance.Instance) (Sat bool) {
+	return len(ins.ClauseMap()) == 0
+}
+
 // Solve :
 func Solve(ins instance.Instance, guesserIn Guesser, completeSearch bool, completeSearcher Searcher) (sat bool, assignment map[instance.Variable]bool) {
 	// terminating condition
-	if len(ins.ClauseMap()) == 0 {
+	if isTrivialSat(ins) {
 		return true, make(map[instance.Variable]bool)
 	}
-	for _, variableMap := range ins.ClauseMap() {
-		if len(variableMap) == 0 {
-			return false, nil
-		}
+	if isTrivialUnsat(ins) {
+		return false, nil
 	}
 	// guess and branch out
 	converged, variable, value := guesserIn(ins)
 	// unconverged path
 	if converged == false {
+		fmt.Println("trying complete search:", len(ins.VariableMap()))
 		sat, assignment = completeSearcher(ins)
 		return sat, assignment
 	}
@@ -40,8 +56,8 @@ func Solve(ins instance.Instance, guesserIn Guesser, completeSearch bool, comple
 	}
 	// reject path
 	if completeSearch {
-		fmt.Println("trying reject path:", len(ins.VariableMap()))
 		ins := ins.Clone()
+		fmt.Println("trying reject path:", len(ins.VariableMap()))
 		ins.Reduce(variable, value)
 		sat, assignment = Solve(ins, guesserIn, completeSearch, completeSearcher)
 		if sat {

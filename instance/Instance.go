@@ -46,3 +46,47 @@ func Random3SAT(numVariables int, density float64) (InstanceOut Instance) {
 	}
 	return InstanceOut
 }
+
+// Searcher :
+type Searcher func(ins Instance) (sat bool, assignment map[Variable]bool)
+
+// Random3SATHard :
+// create 1 root SAT Instance
+func Random3SATHard(numVariables int, searcher Searcher) (InstanceOut Instance) {
+	InstanceOut = NewInstance()
+	// numRoot: 0 (unsat), 1 (single root), 2(many root)
+	findNumRoot := func(ins Instance) int {
+		sat, assignment := searcher(ins)
+		if sat == false {
+			return 0
+		}
+		newClause := make(map[Variable]bool)
+		for variable, value := range assignment {
+			newClause[variable] = !value
+		}
+		ins2 := ins.Clone()
+		ins2.PushClause(newClause)
+		if sat2, _ := searcher(ins2); sat2 {
+			return 2
+		}
+		return 1
+	}
+	for {
+		variableMap := make(map[Variable]bool)
+		for i := 0; i < 3; i++ {
+			v := rand.Intn(numVariables)
+			s := (rand.Intn(2) == 1)
+			variableMap[v] = s
+		}
+		InstanceTest := InstanceOut.Clone()
+		InstanceTest.PushClause(variableMap)
+		numRoot := findNumRoot(InstanceTest)
+		if numRoot == 1 {
+			InstanceOut = InstanceTest
+			return InstanceOut
+		}
+		if numRoot == 2 {
+			InstanceOut = InstanceTest
+		}
+	}
+}

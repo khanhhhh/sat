@@ -1,8 +1,6 @@
 package search
 
 import (
-	"fmt"
-
 	"github.com/khanhhhh/sat/instance"
 )
 
@@ -40,7 +38,6 @@ func Solve(ins instance.Instance, guesserIn Guesser, completeSearch bool, comple
 	converged, variable, value := guesserIn(ins)
 	// unconverged path
 	if converged == false {
-		fmt.Println("trying complete search:", len(ins.VariableMap()))
 		sat, assignment = completeSearcher(ins)
 		return sat, assignment
 	}
@@ -48,7 +45,6 @@ func Solve(ins instance.Instance, guesserIn Guesser, completeSearch bool, comple
 	{
 		ins := ins.Clone()
 		ins.Reduce(variable, value)
-		fmt.Println("trying accept path:", len(ins.VariableMap()))
 		sat, assignment = Solve(ins, guesserIn, completeSearch, completeSearcher)
 		if sat {
 			assignment[variable] = value
@@ -58,7 +54,6 @@ func Solve(ins instance.Instance, guesserIn Guesser, completeSearch bool, comple
 	// reject path
 	if completeSearch {
 		ins := ins.Clone()
-		fmt.Println("trying reject path:", len(ins.VariableMap()))
 		ins.Reduce(variable, value)
 		sat, assignment = Solve(ins, guesserIn, completeSearch, completeSearcher)
 		if sat {

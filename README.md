@@ -1,6 +1,7 @@
 # sat
 
 [![GoDoc](https://godoc.org/github.com/khanhhhh/sat?status.svg)](https://godoc.org/github.com/khanhhhh/sat)
+[![Go Report Card](https://goreportcard.com/badge/github.com/khanhhhh/sat)](https://goreportcard.com/report/github.com/khanhhhh/sat)
 
 # solver
 
